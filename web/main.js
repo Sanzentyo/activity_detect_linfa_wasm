@@ -39,10 +39,10 @@ function renderResult(root, features, pred, elapsed) {
 }
 
 // ランダムにxyzの値に相当するものの配列を生成し、モデルで予測を行う
-// ウィンドウサイズは50サンプル
+// ウィンドウサイズは64サンプル
 // 生成したデータも返す
 function runPredictionFromRandomRawData() {
-  const sampleCount = 50; // 1サンプル = (x,y,z) の3要素
+  const sampleCount = 64; // 1サンプル = (x,y,z) の3要素
   const rawData = [];
   for (let i = 0; i < sampleCount; i++) {
     rawData.push(Math.random() * 3 - 1.5); // x
@@ -93,7 +93,7 @@ async function main() {
         const elapsed = end - start;
         console.log(`Raw data prediction took ${elapsed} ms`);
         outRaw.innerHTML = `
-      <p>生成した生データ (50サンプル):</p>
+      <p>生成した生データ (64サンプル):</p>
       <pre>[${rawData.map(v => v.toFixed(4)).join(", ")}]</pre>
       <p>予測クラス (数値ラベル): <strong>${pred}</strong></p>
       <p>予測にかかった時間: ${elapsed} ms</p>
