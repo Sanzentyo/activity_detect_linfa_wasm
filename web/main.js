@@ -1,22 +1,22 @@
 import init, { predict_activity, predict_activity_from_rawdata, load_model } from "../pkg/linfa_playground.js";
 
-// Utility: generate an array of 9 float32 values (xmin,xmax,xave, ... for x/y/z)
+// Utility: generate an array of 12 float32 values (xmin,xmax,xmean,xstd, ... for x/y/z)
 function randomFeatures() {
   const out = [];
   for (let axis = 0; axis < 3; axis++) {
-    const center = Math.random() * 3 - 1.5;   // [-1.5, 1.5]
-    const halfRange = Math.random() * 2;      // [0, 2]
-    const min = center - halfRange;
-    const max = center + halfRange;
-    const ave = min + Math.random() * (max - min);
-    out.push(min, max, ave);
+    const mean = Math.random() * 3 - 1.5;   // [-1.5, 1.5]
+    const std = Math.random() * 1.5;        // [0,1.5]
+    const spread = Math.random() * 2;       // range component
+    const xmin = mean - spread;
+    const xmax = mean + spread;
+    out.push(xmin, xmax, mean, std);
   }
   return new Float32Array(out);
 }
 
 function renderResult(root, features, pred, elapsed) {
-    const feat = Array.from(features).map(v => v.toFixed(4));
-    root.innerHTML = `
+  const feat = Array.from(features).map(v => v.toFixed(4));
+  root.innerHTML = `
     <table>
       <thead>
         <tr><th>feature</th><th>value</th></tr>
@@ -24,13 +24,16 @@ function renderResult(root, features, pred, elapsed) {
       <tbody>
         <tr><td>xmin</td><td>${feat[0]}</td></tr>
         <tr><td>xmax</td><td>${feat[1]}</td></tr>
-        <tr><td>xave</td><td>${feat[2]}</td></tr>
-        <tr><td>ymin</td><td>${feat[3]}</td></tr>
-        <tr><td>ymax</td><td>${feat[4]}</td></tr>
-        <tr><td>yave</td><td>${feat[5]}</td></tr>
-        <tr><td>zmin</td><td>${feat[6]}</td></tr>
-        <tr><td>zmax</td><td>${feat[7]}</td></tr>
-        <tr><td>zave</td><td>${feat[8]}</td></tr>
+        <tr><td>xmean</td><td>${feat[2]}</td></tr>
+        <tr><td>xstd</td><td>${feat[3]}</td></tr>
+        <tr><td>ymin</td><td>${feat[4]}</td></tr>
+        <tr><td>ymax</td><td>${feat[5]}</td></tr>
+        <tr><td>ymean</td><td>${feat[6]}</td></tr>
+        <tr><td>ystd</td><td>${feat[7]}</td></tr>
+        <tr><td>zmin</td><td>${feat[8]}</td></tr>
+        <tr><td>zmax</td><td>${feat[9]}</td></tr>
+        <tr><td>zmean</td><td>${feat[10]}</td></tr>
+        <tr><td>zstd</td><td>${feat[11]}</td></tr>
       </tbody>
     </table>
     <p>予測クラス (数値ラベル): <strong>${pred}</strong></p>

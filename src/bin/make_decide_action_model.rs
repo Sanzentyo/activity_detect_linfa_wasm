@@ -23,7 +23,7 @@ fn main() -> anyhow::Result<()> {
     ];
 
     // Collect windows per label first for balancing
-    let mut windows_per_label: Vec<Vec<[f32; 9]>> = vec![Vec::new(); mapping.len()];
+    let mut windows_per_label: Vec<Vec<[f32; 12]>> = vec![Vec::new(); mapping.len()];
 
     let data_dir = Path::new("data");
     if !data_dir.exists() {
@@ -83,7 +83,7 @@ fn main() -> anyhow::Result<()> {
     if target == 0 {
         anyhow::bail!("no usable data after trimming");
     }
-    let mut features: Vec<[f32; 9]> = Vec::new();
+    let mut features: Vec<[f32; 12]> = Vec::new();
     let mut labels: Vec<usize> = Vec::new();
     for (label_idx, feats) in windows_per_label.into_iter().enumerate() {
         if feats.is_empty() { continue; }
@@ -97,9 +97,9 @@ fn main() -> anyhow::Result<()> {
     }
 
     let n_samples = features.len();
-    let mut feature_array = Array2::<f32>::zeros((n_samples, 9));
+    let mut feature_array = Array2::<f32>::zeros((n_samples, 12));
     for (i, f) in features.iter().enumerate() {
-        for j in 0..9 {
+        for j in 0..12 {
             feature_array[[i, j]] = f[j];
         }
     }

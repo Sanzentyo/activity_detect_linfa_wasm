@@ -8,8 +8,8 @@ pub struct AccelData {
 
 pub const WINDOW_SIZE: usize = 64;
 
-pub fn extract_window_features(window: &[AccelData]) -> [f32; 9] {
-    // xmin, xmax, xave, ymin, ymax, yave, zmin, zmax, zave
+pub fn extract_window_features(window: &[AccelData]) -> [f32; 12] {
+    // xmin, xmax, xmean, xstd, ymin, ymax, ymean, ystd, zmin, zmax, zmean, zstd
     let n = window.len() as f32;
     let mut sum_x = 0f32;
     let mut sum_y = 0f32;
@@ -35,11 +35,23 @@ pub fn extract_window_features(window: &[AccelData]) -> [f32; 9] {
         if r.accel_z > max_z { max_z = r.accel_z; }
     }
 
-    let ave_x = sum_x / n;
-    let ave_y = sum_y / n;
-    let ave_z = sum_z / n;
+    let mean_x = sum_x / n;
+    let mean_y = sum_y / n;
+    let mean_z = sum_z / n;
 
-    [min_x, max_x, ave_x, min_y, max_y, ave_y, min_z, max_z, ave_z]
+    let mut var_x = 0f32;
+    let mut var_y = 0f32;
+    let mut var_z = 0f32;
+    for r in window.iter() {
+        var_x += (r.accel_x - mean_x).powi(2);
+        var_y += (r.accel_y - mean_y).powi(2);
+        var_z += (r.accel_z - mean_z).powi(2);
+    }
+    let std_x = (var_x / n).sqrt();
+    let std_y = (var_y / n).sqrt();
+    let std_z = (var_z / n).sqrt();
+
+    [min_x, max_x, mean_x, std_x, min_y, max_y, mean_y, std_y, min_z, max_z, mean_z, std_z]
 }
 
 #[derive(bincode::Encode, bincode::Decode)]
@@ -80,7 +92,7 @@ pub fn predict_activity(features: Vec<f32>) -> i32 {
 
         bincode_model.0.tree
     });
-    let feature_array = ndarray::Array2::from_shape_vec((1, 9), features).unwrap();
+    let feature_array = ndarray::Array2::from_shape_vec((1, 12), features).unwrap();
     model.predict(&feature_array)[0] as i32
 }
 
