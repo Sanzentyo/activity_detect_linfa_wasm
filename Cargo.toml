@@ -1,0 +1,24 @@
+[package]
+name = "linfa-playground"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.100"
+bincode = {version = "2.0.1", features = ["derive", "serde"] }
+csv = "1.4.0"
+linfa = "0.8.0"
+linfa-datasets = { version = "0.8.0", features = ["iris"] }
+linfa-trees = { version = "0.8.0", features = ["serde"] }
+ndarray = "0.16"
+ndarray-rand = "0.15"
+rand = { version = "0.8", features = ["small_rng"] }
+serde = { version = "1.0.228", features = ["derive"] }
+getrandom = { version = "0.2", features = ["js"] }
+
+# wasm
+#[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = "0.2.105"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
